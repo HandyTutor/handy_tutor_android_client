@@ -28,19 +28,22 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class MainActivity extends Activity {
-
+    // Naver Recognition에 필요한 변수
     private RecognitionHandler handler;
     private NaverRecognizer naverRecognizer;
+    private java.lang.String mResult;
+    private AudioWriterPCM writer;
 
+    // ChatRoomo, VideoList 리사이클러 뷰에 필요한 변수
     private RecyclerView videoList;
     private VideoListAdapter videoListAdapter;
     private RecyclerView chatRoom;
     private ChatRoomAdapter chatRoomAdapter;
-    private java.lang.String mResult;
-    private AudioWriterPCM writer;
 
+    // 말풍선 생성에 필요한 변수
     private boolean chatBubbleFlag = false;
     private ChatBubbleItem chatBubbleItem;
+
     // Handle speech recognition Messages.
     private void handleMessage(Message msg) {
         switch (msg.what) {
@@ -56,7 +59,6 @@ public class MainActivity extends Activity {
                 break;
 
             case R.id.partialResult:
-                Log.d(Config.TAG,"partialResult");
                 // Extract obj property typed with String.
                 mResult = (java.lang.String) (msg.obj);
                 if(!mResult.equals("")){
@@ -72,7 +74,6 @@ public class MainActivity extends Activity {
                 break;
 
             case R.id.finalResult:
-                Log.d(Config.TAG,"finalResult");
                 // Extract obj property typed with String array.
                 // The first element is recognition result for speech.
                 SpeechRecognitionResult speechRecognitionResult = (SpeechRecognitionResult) msg.obj;
@@ -86,7 +87,6 @@ public class MainActivity extends Activity {
                 break;
 
             case R.id.recognitionError:
-                Log.d(Config.TAG,"recognitionError");
                 if (writer != null) {
                     writer.close();
                 }
@@ -94,41 +94,43 @@ public class MainActivity extends Activity {
                 break;
 
             case R.id.clientInactive:
-                Log.d(Config.TAG,"clientInactive");
                 chatBubbleFlag = false;
                 if (writer != null) {
                     writer.close();
                 }
-
-                if(mResult.contains("시작")){
-                    new NaverTTS("오늘 학습을 시작할게요.", new MediaPlayer.OnCompletionListener() {
-                        @Override
-                        public void onCompletion(MediaPlayer mediaPlayer) {
-                            ChatBubbleItem chatBubbleItem = new ChatBubbleItem(true,"오늘 학습을 시작할게요.");
-                            chatRoomAdapter.addItem(chatBubbleItem);
-                            chatRoom.scrollToPosition(chatRoomAdapter.getItemCount() - 1);
-
-                            Intent intent = new Intent(getApplicationContext() , StudyActivity.class);
-                            intent.putExtra("video_key", "lSMTVZ58fvc");
-                            intent.putExtra("index", 1);
-                            getApplication().startActivity(intent);
-                        }
-                    }).start();
-                } else {
-                    new NaverTTS("무슨 뜻인지 잘 모르겠어요. 다시 한번 말해주세요.", new MediaPlayer.OnCompletionListener() {
-                        @Override
-                        public void onCompletion(MediaPlayer mediaPlayer) {
-                            ChatBubbleItem chatBubbleItem = new ChatBubbleItem(true, "무슨 뜻인지 잘 모르겠어요. 다시 한번 말해주세요.");
-                            chatRoomAdapter.addItem(chatBubbleItem);
-                            chatRoom.scrollToPosition(chatRoomAdapter.getItemCount() - 1);
-                            startRecognition();
-                        }
-                    }).start();
-                }
+                handleFinalResult(mResult);
                 break;
         }
     }
 
+    // 음성 인식 최종 결과를 처리
+    private void handleFinalResult(String result){
+        if(result.contains("시작")){
+            new NaverTTS("오늘 학습을 시작할게요.", new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    ChatBubbleItem chatBubbleItem = new ChatBubbleItem(true,"오늘 학습을 시작할게요.");
+                    chatRoomAdapter.addItem(chatBubbleItem);
+                    chatRoom.scrollToPosition(chatRoomAdapter.getItemCount() - 1);
+
+                    Intent intent = new Intent(getApplicationContext() , StudyActivity.class);
+                    intent.putExtra("video_key", "lSMTVZ58fvc");
+                    intent.putExtra("index", 1);
+                    getApplication().startActivity(intent);
+                }
+            }).start();
+        } else {
+            new NaverTTS("무슨 뜻인지 잘 모르겠어요. 다시 한번 말해주세요.", new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    ChatBubbleItem chatBubbleItem = new ChatBubbleItem(true, "무슨 뜻인지 잘 모르겠어요. 다시 한번 말해주세요.");
+                    chatRoomAdapter.addItem(chatBubbleItem);
+                    chatRoom.scrollToPosition(chatRoomAdapter.getItemCount() - 1);
+                    startRecognition();
+                }
+            }).start();
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -180,6 +182,8 @@ public class MainActivity extends Activity {
             }
         }).start();
     }
+
+    // 음성 인식을 시작
     private void startRecognition(){
         if(!naverRecognizer.getSpeechRecognizer().isRunning()) {
             // Start button is pushed when SpeechRecognizer's state is inactive.
