@@ -233,6 +233,18 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
                 startRecognition();
             }
         }).start();
+        /*
+        final EditText seekToText = (EditText) findViewById(R.id.seek_to_text);
+        Button seekToButton = (Button) findViewById(R.id.seek_to_button);
+        seekToButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int skipToSecs = Integer.valueOf(seekToText.getText().toString());
+                player.seekToMillis(skipToSecs * 1000);
+            }
+        });
+        */
+
     }
 
     @Override
