@@ -116,7 +116,7 @@ public class MainActivity extends Activity {
                     Intent intent = new Intent(getApplicationContext() , StudyActivity.class);
                     intent.putExtra("video_key", "lSMTVZ58fvc");
                     intent.putExtra("index", 1);
-                    getApplication().startActivity(intent);
+                    startActivity(intent);
                 }
             }).start();
         } else {
@@ -213,6 +213,13 @@ public class MainActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
+        // NOTE : release() must be called on stop time.
+        naverRecognizer.getSpeechRecognizer().release();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
         // NOTE : release() must be called on stop time.
         naverRecognizer.getSpeechRecognizer().release();
     }

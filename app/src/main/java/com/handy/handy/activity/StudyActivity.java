@@ -178,6 +178,13 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
         naverRecognizer.getSpeechRecognizer().release();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // NOTE : release() must be called on stop time.
+        naverRecognizer.getSpeechRecognizer().release();
+    }
+
     // Declare handler for handling SpeechRecognizer thread's Messages.
     static class RecognitionHandler extends Handler {
         private final WeakReference<StudyActivity> mActivity;
@@ -226,6 +233,7 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
             public void onCompletion(MediaPlayer mediaPlayer) {
                 ChatBubbleItem chatBubbleItem = new ChatBubbleItem(true, "안녕하세요. 학습 목록을 보여 드릴게요.");
                 chatRoomAdapter.addItem(chatBubbleItem);
+                naverRecognizer.getSpeechRecognizer().initialize();
                 startRecognition();
             }
         }).start();
