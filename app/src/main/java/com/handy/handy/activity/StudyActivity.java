@@ -7,10 +7,10 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.google.android.youtube.player.YouTubeBaseActivity;
@@ -19,10 +19,8 @@ import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
 import com.handy.handy.Config;
 import com.handy.handy.Item.ChatBubbleItem;
-import com.handy.handy.Item.VideoListItem;
 import com.handy.handy.R;
 import com.handy.handy.adapter.ChatRoomAdapter;
-import com.handy.handy.adapter.VideoListAdapter;
 import com.handy.handy.utils.AudioWriterPCM;
 import com.handy.handy.utils.NaverTTS;
 import com.naver.speech.clientapi.SpeechConfig;
@@ -116,18 +114,15 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
 
     // 음성 인식 최종 결과를 처리
     private void handleFinalResult(String result){
-        if(result.contains("시작")){
-            new NaverTTS("오늘 학습을 시작할게요.", new MediaPlayer.OnCompletionListener() {
+        if(result.contains("그만할래")){
+            new NaverTTS("목록을 다시 보여드릴게요.", new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    ChatBubbleItem chatBubbleItem = new ChatBubbleItem(true,"오늘 학습을 시작할게요.");
+                    ChatBubbleItem chatBubbleItem = new ChatBubbleItem(true,"목록을 다시 보여 드릴게요.");
                     chatRoomAdapter.addItem(chatBubbleItem);
                     chatRoom.scrollToPosition(chatRoomAdapter.getItemCount() - 1);
 
-                    Intent intent = new Intent(getApplicationContext() , StudyActivity.class);
-                    intent.putExtra("video_key", "lSMTVZ58fvc");
-                    intent.putExtra("index", 1);
-                    getApplication().startActivity(intent);
+                    finish();
                 }
             }).start();
         } else {
@@ -205,6 +200,7 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_study);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         videoKey = getIntent().getStringExtra("video_key");
 
@@ -228,28 +224,15 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
         chatRoom.setItemAnimator(new DefaultItemAnimator());
 
         // 채팅 룸 리사이클러 뷰 아이템 추가
-        new NaverTTS("안녕하세요. 학습 목록을 보여 드릴게요.", new MediaPlayer.OnCompletionListener() {
+        new NaverTTS("자막을 포함해서 보여드릴게요.", new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
-                ChatBubbleItem chatBubbleItem = new ChatBubbleItem(true, "안녕하세요. 학습 목록을 보여 드릴게요.");
+                ChatBubbleItem chatBubbleItem = new ChatBubbleItem(true, "자막을 포함해서 보여드릴게요.");
                 chatRoomAdapter.addItem(chatBubbleItem);
                 naverRecognizer.getSpeechRecognizer().initialize();
                 startRecognition();
             }
         }).start();
-
-        /*
-        final EditText seekToText = (EditText) findViewById(R.id.seek_to_text);
-        Button seekToButton = (Button) findViewById(R.id.seek_to_button);
-        seekToButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int skipToSecs = Integer.valueOf(seekToText.getText().toString());
-                player.seekToMillis(skipToSecs * 1000);
-            }
-        });
-        */
-
     }
 
     @Override

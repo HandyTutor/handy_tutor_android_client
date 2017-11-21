@@ -12,6 +12,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.WindowManager;
 
 import com.handy.handy.Config;
 import com.handy.handy.Item.ChatBubbleItem;
@@ -33,6 +34,8 @@ public class MainActivity extends Activity {
     private NaverRecognizer naverRecognizer;
     private java.lang.String mResult;
     private AudioWriterPCM writer;
+    private boolean restartFlag = false;
+    private String greeting = "목록을 보여 드릴게요.";
 
     // ChatRoomo, VideoList 리사이클러 뷰에 필요한 변수
     private RecyclerView videoList;
@@ -135,6 +138,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         videoList = findViewById(R.id.video_list);
         chatRoom = findViewById(R.id.chat_room);
@@ -161,26 +165,8 @@ public class MainActivity extends Activity {
         videoRecyclerItem.setTitle("1. 사우스파크");
         videoRecyclerItem.setVideoKey("lSMTVZ58fvc");
         videoListAdapter.addItem(videoRecyclerItem);
-        videoRecyclerItem = new VideoListItem();
-        videoRecyclerItem.setCheck("완료");
-        videoRecyclerItem.setTitle("1. 사우스파크");
-        videoRecyclerItem.setVideoKey("lSMTVZ58fvc");
-        videoListAdapter.addItem(videoRecyclerItem);
-        videoRecyclerItem = new VideoListItem();
-        videoRecyclerItem.setCheck("완료");
-        videoRecyclerItem.setTitle("1. 사우스파크");
-        videoRecyclerItem.setVideoKey("lSMTVZ58fvc");
-        videoListAdapter.addItem(videoRecyclerItem);
 
-        // 채팅 룸 리사이클러 뷰 아이템 추가
-        new NaverTTS("안녕하세요. 학습 목록을 보여 드릴게요.", new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                ChatBubbleItem chatBubbleItem = new ChatBubbleItem(true, "안녕하세요. 학습 목록을 보여 드릴게요.");
-                chatRoomAdapter.addItem(chatBubbleItem);
-                startRecognition();
-            }
-        }).start();
+
     }
 
     // 음성 인식을 시작
@@ -200,7 +186,23 @@ public class MainActivity extends Activity {
     protected void onStart() {
         super.onStart();
         // NOTE : initialize() must be called on start time.
-        naverRecognizer.getSpeechRecognizer().initialize();
+
+        if(!restartFlag){
+            greeting = "안녕하세요." + greeting;
+            restartFlag = true;
+        } else {
+            greeting = "학습 목록을 보여드릴게요.";
+            chatRoomAdapter = new ChatRoomAdapter(R.layout.chat_bubble,getApplicationContext());
+        }
+        new NaverTTS(greeting, new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                ChatBubbleItem chatBubbleItem = new ChatBubbleItem(true, greeting);
+                chatRoomAdapter.addItem(chatBubbleItem);
+                naverRecognizer.getSpeechRecognizer().initialize();
+                startRecognition();
+            }
+        }).start();
     }
 
     @Override
