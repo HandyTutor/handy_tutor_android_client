@@ -229,8 +229,27 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
             public void onCompletion(MediaPlayer mediaPlayer) {
                 ChatBubbleItem chatBubbleItem = new ChatBubbleItem(true, "자막을 포함해서 보여드릴게요.");
                 chatRoomAdapter.addItem(chatBubbleItem);
-                naverRecognizer.getSpeechRecognizer().initialize();
-                startRecognition();
+                new Thread(new Runnable() {
+                    int i = 1;
+                    @Override
+                    public void run() {
+                        while (i < 10) {
+                            if (player.getCurrentTimeMillis() > i * 1000) {
+                                i++;
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ChatBubbleItem chatBubbleItem = new ChatBubbleItem(true, i + "번째 자막");
+                                        chatRoomAdapter.addItem(chatBubbleItem);
+                                        chatRoom.scrollToPosition(chatRoomAdapter.getItemCount() - 1);
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }).start();
+                //naverRecognizer.getSpeechRecognizer().initialize();
+                //startRecognition();
             }
         }).start();
         /*
