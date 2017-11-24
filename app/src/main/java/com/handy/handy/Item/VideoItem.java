@@ -11,6 +11,15 @@ public class VideoItem {
     private ArrayList enSubtitleTimes;
     private ArrayList<String> krSubtitles;
     private ArrayList<String> enSubtitles;
+    private ArrayList subtitleCharacter;
+
+    public ArrayList getSubtitleCharacter() {
+        return subtitleCharacter;
+    }
+
+    public void setSubtitleCharacter(ArrayList subtitleCharacter) {
+        this.subtitleCharacter = subtitleCharacter;
+    }
 
     public ArrayList<String> getKrSubtitles() {
         return krSubtitles;
