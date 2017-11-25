@@ -14,6 +14,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.WindowManager;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.handy.handy.Config;
 import com.handy.handy.Item.ChatBubbleItem;
 import com.handy.handy.Item.VideoListItem;
@@ -22,8 +24,14 @@ import com.handy.handy.utils.NaverTTS;
 import com.handy.handy.R;
 import com.handy.handy.adapter.VideoListAdapter;
 import com.handy.handy.utils.AudioWriterPCM;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
 import com.naver.speech.clientapi.SpeechConfig;
 import com.naver.speech.clientapi.SpeechRecognitionResult;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -159,14 +167,32 @@ public class MainActivity extends Activity {
         chatRoom.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         chatRoom.setItemAnimator(new DefaultItemAnimator());
 
-        // 비디오 리스트 리사이클러 뷰 아이템 추가
-        VideoListItem videoRecyclerItem = new VideoListItem();
-        videoRecyclerItem.setCheck("완료");
-        videoRecyclerItem.setTitle("1. 사우스파크");
-        videoRecyclerItem.setVideoKey("lSMTVZ58fvc");
-        videoListAdapter.addItem(videoRecyclerItem);
+        // 서버에서 비디오 목록을 받아옴
+        Ion.with(getApplicationContext())
+                .load("http://13.124.255.55:5000/video_list")
+                .asString()
+                .setCallback(new FutureCallback<String>() {
+                    @Override
+                    public void onCompleted(Exception e, String result) {
+                        try {
+                            JSONArray videoList = new JSONArray(result);
+                            JSONObject video;
 
+                            // 비디오 리스트 리사이클러뷰에 추가
+                            for(int i = 0;i < videoList.length();i++){
+                                video = videoList.getJSONObject(i);
+                                VideoListItem videoRecyclerItem = new VideoListItem();
+                                videoRecyclerItem.setCheck("완료");
+                                videoRecyclerItem.setTitle((String)video.get("VIDEO_TITLE"));
+                                videoRecyclerItem.setVideoKey((String)video.get("VIDEO_KEY"));
+                                videoListAdapter.addItem(videoRecyclerItem);
+                            }
 
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                });
     }
 
     // 음성 인식을 시작
