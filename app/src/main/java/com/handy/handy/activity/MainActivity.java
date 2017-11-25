@@ -120,9 +120,7 @@ public class MainActivity extends Activity {
             new NaverTTS("오늘 학습을 시작할게요.", new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    ChatBubbleItem chatBubbleItem = new ChatBubbleItem(true,"오늘 학습을 시작할게요.");
-                    chatRoomAdapter.addItem(chatBubbleItem);
-                    chatRoom.scrollToPosition(chatRoomAdapter.getItemCount() - 1);
+                    addChatBubble(true, "오늘 학습을 시작할게요.");
 
                     Intent intent = new Intent(getApplicationContext() , StudyActivity.class);
                     intent.putExtra("video_key", "lSMTVZ58fvc");
@@ -134,13 +132,16 @@ public class MainActivity extends Activity {
             new NaverTTS("무슨 뜻인지 잘 모르겠어요. 다시 한번 말해주세요.", new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    ChatBubbleItem chatBubbleItem = new ChatBubbleItem(true, "무슨 뜻인지 잘 모르겠어요. 다시 한번 말해주세요.");
-                    chatRoomAdapter.addItem(chatBubbleItem);
-                    chatRoom.scrollToPosition(chatRoomAdapter.getItemCount() - 1);
+                    addChatBubble(true, "무슨 뜻인지 잘 모르겠어요. 다시 한번 말해주세요.");
                     startRecognition();
                 }
             }).start();
         }
+    }
+    private void addChatBubble(boolean isLeft, String content){
+        ChatBubbleItem chatBubbleItem = new ChatBubbleItem(isLeft, content);
+        chatRoomAdapter.addItem(chatBubbleItem);
+        chatRoom.scrollToPosition(chatRoomAdapter.getItemCount() - 1);
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -223,9 +224,7 @@ public class MainActivity extends Activity {
         new NaverTTS(greeting, new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
-                ChatBubbleItem chatBubbleItem = new ChatBubbleItem(true, greeting);
-                chatRoomAdapter.addItem(chatBubbleItem);
-                naverRecognizer.getSpeechRecognizer().initialize();
+                addChatBubble(true, greeting);
                 startRecognition();
             }
         }).start();
