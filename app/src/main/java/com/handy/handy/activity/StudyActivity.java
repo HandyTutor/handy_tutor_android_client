@@ -264,7 +264,6 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
             }
         });
         */
-
     }
 
     @Override
