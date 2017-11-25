@@ -14,8 +14,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.WindowManager;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.handy.handy.Config;
 import com.handy.handy.Item.ChatBubbleItem;
 import com.handy.handy.Item.VideoListItem;
@@ -43,7 +41,7 @@ public class MainActivity extends Activity {
     private java.lang.String mResult;
     private AudioWriterPCM writer;
     private boolean restartFlag = false;
-    private String greeting = "목록을 보여 드릴게요.";
+    private String greeting = "학습 목록을 보여 드릴게요.";
 
     // ChatRoomo, VideoList 리사이클러 뷰에 필요한 변수
     private RecyclerView videoList;
@@ -67,6 +65,7 @@ public class MainActivity extends Activity {
 
             case R.id.audioRecording:
                 writer.write((short[]) msg.obj);
+                Log.d(Config.TAG,"recoding");
                 break;
 
             case R.id.partialResult:
@@ -75,6 +74,7 @@ public class MainActivity extends Activity {
                 if(!mResult.equals("")){
                     if(chatBubbleFlag == false){
                         chatBubbleFlag = true;
+                        addChatBubble(false, mResult);
                         chatBubbleItem = new ChatBubbleItem(false, mResult);
                         chatRoomAdapter.addItem(chatBubbleItem);
                         chatRoom.scrollToPosition(chatRoomAdapter.getItemCount() - 1);
@@ -94,7 +94,6 @@ public class MainActivity extends Activity {
                 if(!mResult.equals("")) {
                     chatRoomAdapter.setContent(mResult);
                 }
-
                 break;
 
             case R.id.recognitionError:
@@ -138,17 +137,22 @@ public class MainActivity extends Activity {
             }).start();
         }
     }
+
     private void addChatBubble(boolean isLeft, String content){
         ChatBubbleItem chatBubbleItem = new ChatBubbleItem(isLeft, content);
         chatRoomAdapter.addItem(chatBubbleItem);
         chatRoom.scrollToPosition(chatRoomAdapter.getItemCount() - 1);
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // 화면 꺼지지 않음
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        // 뷰를 할당
         videoList = findViewById(R.id.video_list);
         chatRoom = findViewById(R.id.chat_room);
 
@@ -170,7 +174,7 @@ public class MainActivity extends Activity {
 
         // 서버에서 비디오 목록을 받아옴
         Ion.with(getApplicationContext())
-                .load("http://13.124.255.55:5000/video_list")
+                .load(Config.SERVER_ADRESS + "video_list")
                 .asString()
                 .setCallback(new FutureCallback<String>() {
                     @Override
@@ -188,7 +192,6 @@ public class MainActivity extends Activity {
                                 videoRecyclerItem.setVideoKey((String)video.get("VIDEO_KEY"));
                                 videoListAdapter.addItem(videoRecyclerItem);
                             }
-
                         } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
@@ -209,11 +212,13 @@ public class MainActivity extends Activity {
             naverRecognizer.getSpeechRecognizer().stop();
         }
     }
+
     @Override
     protected void onStart() {
         super.onStart();
         // NOTE : initialize() must be called on start time.
 
+        Log.d("FUCK","온스타트");
         if(!restartFlag){
             greeting = "안녕하세요." + greeting;
             restartFlag = true;
@@ -225,6 +230,7 @@ public class MainActivity extends Activity {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 addChatBubble(true, greeting);
+                naverRecognizer.getSpeechRecognizer().initialize();
                 startRecognition();
             }
         }).start();

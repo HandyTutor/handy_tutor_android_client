@@ -48,12 +48,10 @@ class NaverRecognizer implements SpeechRecognitionListener {
 
 	public void recognize(LanguageType languageType) {
 		try {
-			Log.d("FUCK","스타트 리코그니션1");
 			mRecognizer.recognize(new SpeechConfig(
 					languageType,
 					EndPointDetectType.AUTO));
 		} catch (SpeechRecognitionException e) {
-			Log.d("FUCK","스타트 리코그니션2");
 			e.printStackTrace();
 		}
 	}

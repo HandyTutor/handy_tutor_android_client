@@ -76,6 +76,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
             textTitle = (TextView) itemView.findViewById(R.id.txt_title);
             textCheck = (TextView) itemView.findViewById(R.id.txt_check);
         }
+
         public void onClick(View v) {
 
             Intent intent = new Intent(v.getContext() , StudyActivity.class);

@@ -114,14 +114,11 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
 
     // 음성 인식 최종 결과를 처리
     private void handleFinalResult(String result){
-        if(result.contains("그만할래")){
-            new NaverTTS("목록을 다시 보여드릴게요.", new MediaPlayer.OnCompletionListener() {
+        if(result.contains("그만")){
+            new NaverTTS("학습 목록을 다시 보여드릴게요.", new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    ChatBubbleItem chatBubbleItem = new ChatBubbleItem(true,"목록을 다시 보여 드릴게요.");
-                    chatRoomAdapter.addItem(chatBubbleItem);
-                    chatRoom.scrollToPosition(chatRoomAdapter.getItemCount() - 1);
-
+                    addChatBubble(true, "학습 목록을 다시 보여드릴게요.");
                     finish();
                 }
             }).start();
@@ -129,13 +126,17 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
             new NaverTTS("무슨 뜻인지 잘 모르겠어요. 다시 한번 말해주세요.", new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    ChatBubbleItem chatBubbleItem = new ChatBubbleItem(true, "무슨 뜻인지 잘 모르겠어요. 다시 한번 말해주세요.");
-                    chatRoomAdapter.addItem(chatBubbleItem);
-                    chatRoom.scrollToPosition(chatRoomAdapter.getItemCount() - 1);
+                    addChatBubble(true, "무슨 뜻인지 잘 모르겠어요. 다시 한번 말해주세요.");
                     startRecognition();
                 }
             }).start();
         }
+    }
+
+    private void addChatBubble(boolean isLeft, String content){
+        ChatBubbleItem chatBubbleItem = new ChatBubbleItem(isLeft, content);
+        chatRoomAdapter.addItem(chatBubbleItem);
+        chatRoom.scrollToPosition(chatRoomAdapter.getItemCount() - 1);
     }
 
     // 음성 인식을 시작
