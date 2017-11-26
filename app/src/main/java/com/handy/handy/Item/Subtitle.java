@@ -5,19 +5,10 @@ package com.handy.handy.Item;
  */
 
 public class Subtitle {
-    private String videoKey;
     private String korean;
     private String english;
     private int role;
     private int time;
-
-    public String getVideoKey() {
-        return videoKey;
-    }
-
-    public void setVideoKey(String videoKey) {
-        this.videoKey = videoKey;
-    }
 
     public String getKorean() {
         return korean;

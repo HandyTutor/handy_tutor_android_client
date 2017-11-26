@@ -17,16 +17,25 @@ import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
+import com.google.gson.JsonArray;
 import com.handy.handy.Config;
 import com.handy.handy.Item.ChatBubbleItem;
+import com.handy.handy.Item.Subtitle;
 import com.handy.handy.R;
 import com.handy.handy.adapter.ChatRoomAdapter;
 import com.handy.handy.utils.AudioWriterPCM;
 import com.handy.handy.utils.NaverTTS;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
 import com.naver.speech.clientapi.SpeechConfig;
 import com.naver.speech.clientapi.SpeechRecognitionResult;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener {
@@ -52,6 +61,9 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
     // 말풍선 생성에 필요한 변수
     private boolean chatBubbleFlag = false;
     private ChatBubbleItem chatBubbleItem;
+
+    // 자막 재생을 위한 변수
+    private ArrayList<Subtitle> subtitles;
 
     // Handle speech recognition Messages.
     private void handleMessage(Message msg) {
@@ -203,16 +215,15 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
         setContentView(R.layout.activity_study);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        chatRoom = findViewById(R.id.chat_room);
         videoKey = getIntent().getStringExtra("video_key");
 
         // 유튜브 플레이어 셋팅
         youTubeView = findViewById(R.id.youtube_view);
         youTubeView.initialize(Config.YOUTUBE_API_KEY, this);
-
         playerStateChangeListener = new MyPlayerStateChangeListener();
         playbackEventListener = new MyPlaybackEventListener();
 
-        chatRoom = findViewById(R.id.chat_room);
 
         // Naver STT 셋팅
         handler = new StudyActivity.RecognitionHandler(this);
@@ -224,6 +235,32 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
         chatRoom.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         chatRoom.setItemAnimator(new DefaultItemAnimator());
 
+        // 서버에서 자막리스트를 받아옴
+        Ion.with(getApplicationContext())
+                .load(Config.SERVER_ADRESS + "video")
+                .setBodyParameter("video_key",videoKey)
+                .asString()
+                .setCallback(new FutureCallback<String>() {
+                    @Override
+                    public void onCompleted(Exception e, String result) {
+                        try {
+                            JSONArray jsonArray = new JSONArray(result);
+                            subtitles = new ArrayList<Subtitle>();
+                            for(int i = 0;i < jsonArray.length();i++){
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                Subtitle subtitle = new Subtitle();
+                                subtitle.setEnglish(jsonObject.getString("ENGLISH"));
+                                subtitle.setKorean(jsonObject.getString("KOREAN"));
+                                subtitle.setRole(Integer.parseInt(jsonObject.getString("ROLE")));
+                                subtitle.setTime(Integer.parseInt(jsonObject.getString("TIME")));
+                            }
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                });
+
+        /*
         // 채팅 룸 리사이클러 뷰 아이템 추가
         new NaverTTS("자막을 포함해서 보여드릴게요.", new MediaPlayer.OnCompletionListener() {
             @Override
@@ -253,7 +290,7 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
                 //startRecognition();
             }
         }).start();
-        /*
+
         final EditText seekToText = (EditText) findViewById(R.id.seek_to_text);
         Button seekToButton = (Button) findViewById(R.id.seek_to_button);
         seekToButton.setOnClickListener(new View.OnClickListener() {
@@ -263,7 +300,7 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
                 player.seekToMillis(skipToSecs * 1000);
             }
         });
-        */
+     */
     }
 
     @Override

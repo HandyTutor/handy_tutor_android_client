@@ -122,7 +122,7 @@ public class MainActivity extends Activity {
                     addChatBubble(true, "오늘 학습을 시작할게요.");
 
                     Intent intent = new Intent(getApplicationContext() , StudyActivity.class);
-                    intent.putExtra("video_key", "lSMTVZ58fvc");
+                    intent.putExtra("video_key", "pAvl9GSWc8Y ");
                     intent.putExtra("index", 1);
                     startActivity(intent);
                 }
@@ -218,7 +218,6 @@ public class MainActivity extends Activity {
         super.onStart();
         // NOTE : initialize() must be called on start time.
 
-        Log.d("FUCK","온스타트");
         if(!restartFlag){
             greeting = "안녕하세요." + greeting;
             restartFlag = true;
