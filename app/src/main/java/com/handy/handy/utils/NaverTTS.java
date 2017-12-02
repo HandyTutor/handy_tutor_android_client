@@ -20,6 +20,7 @@ public class NaverTTS extends Thread{
         this.onCompletionListener = onCompletionListener;
     }
     public void run(){
+
         try {
             String text = URLEncoder.encode(inputText, "UTF-8"); // 13자
             String apiURL = "https://openapi.naver.com/v1/voice/tts.bin";

@@ -35,6 +35,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
         list.add(chatBubbleItem);
         this.notifyItemInserted(list.size() - 1);
     }
+
     public void setContent(String content){
         list.get(list.size() - 1).setContent(content);
         this.notifyItemChanged(list.size() - 1);
@@ -57,6 +58,12 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
             viewHolder.linearLayout.removeAllViews();
             viewHolder.linearLayout.addView(viewHolder.arrow);
             viewHolder.linearLayout.addView(viewHolder.content);
+        } else {
+            viewHolder.arrow.setImageResource(R.drawable.speech_bubble_right);
+            viewHolder.linearLayout.setGravity(Gravity.RIGHT);
+            viewHolder.linearLayout.removeAllViews();
+            viewHolder.linearLayout.addView(viewHolder.content);
+            viewHolder.linearLayout.addView(viewHolder.arrow);
         }
         viewHolder.itemView.setTag(item);
     }

@@ -74,7 +74,6 @@ public class MainActivity extends Activity {
                 if(!mResult.equals("")){
                     if(chatBubbleFlag == false){
                         chatBubbleFlag = true;
-                        addChatBubble(false, mResult);
                         chatBubbleItem = new ChatBubbleItem(false, mResult);
                         chatRoomAdapter.addItem(chatBubbleItem);
                         chatRoom.scrollToPosition(chatRoomAdapter.getItemCount() - 1);
@@ -122,7 +121,7 @@ public class MainActivity extends Activity {
                     addChatBubble(true, "오늘 학습을 시작할게요.");
 
                     Intent intent = new Intent(getApplicationContext() , StudyActivity.class);
-                    intent.putExtra("video_key", "pAvl9GSWc8Y ");
+                    intent.putExtra("video_key", "pAvl9GSWc8Y");
                     intent.putExtra("index", 1);
                     startActivity(intent);
                 }

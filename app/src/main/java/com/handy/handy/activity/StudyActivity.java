@@ -17,7 +17,6 @@ import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
-import com.google.gson.JsonArray;
 import com.handy.handy.Config;
 import com.handy.handy.Item.ChatBubbleItem;
 import com.handy.handy.Item.Subtitle;
@@ -64,6 +63,10 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
 
     // 자막 재생을 위한 변수
     private ArrayList<Subtitle> subtitles;
+    private int nowSubtitleIndex = 0;
+
+    // 학습 순서 변수 0 = 한글 자막 재생 중, 1 = 영어 자막 재생 중, 2 = 인터랙팅 중
+    private int state = 0;
 
     // Handle speech recognition Messages.
     private void handleMessage(Message msg) {
@@ -216,14 +219,14 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         chatRoom = findViewById(R.id.chat_room);
-        videoKey = getIntent().getStringExtra("video_key");
+        //videoKey = getIntent().getStringExtra("video_key");
+        videoKey = "pAvl9GSWc8Y";
 
         // 유튜브 플레이어 셋팅
         youTubeView = findViewById(R.id.youtube_view);
         youTubeView.initialize(Config.YOUTUBE_API_KEY, this);
         playerStateChangeListener = new MyPlayerStateChangeListener();
         playbackEventListener = new MyPlaybackEventListener();
-
 
         // Naver STT 셋팅
         handler = new StudyActivity.RecognitionHandler(this);
@@ -253,55 +256,16 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
                                 subtitle.setKorean(jsonObject.getString("KOREAN"));
                                 subtitle.setRole(Integer.parseInt(jsonObject.getString("ROLE")));
                                 subtitle.setTime(Integer.parseInt(jsonObject.getString("TIME")));
+                                subtitles.add(subtitle);
                             }
+                            Log.v("FUCK", subtitles.size() + result);
                         } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
                     }
                 });
-
-        /*
-        // 채팅 룸 리사이클러 뷰 아이템 추가
-        new NaverTTS("자막을 포함해서 보여드릴게요.", new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                ChatBubbleItem chatBubbleItem = new ChatBubbleItem(true, "자막을 포함해서 보여드릴게요.");
-                chatRoomAdapter.addItem(chatBubbleItem);
-                new Thread(new Runnable() {
-                    int i = 1;
-                    @Override
-                    public void run() {
-                        while (i < 10) {
-                            if (player.getCurrentTimeMillis() > i * 1000) {
-                                i++;
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        ChatBubbleItem chatBubbleItem = new ChatBubbleItem(true, i + "번째 자막");
-                                        chatRoomAdapter.addItem(chatBubbleItem);
-                                        chatRoom.scrollToPosition(chatRoomAdapter.getItemCount() - 1);
-                                    }
-                                });
-                            }
-                        }
-                    }
-                }).start();
-                //naverRecognizer.getSpeechRecognizer().initialize();
-                //startRecognition();
-            }
-        }).start();
-
-        final EditText seekToText = (EditText) findViewById(R.id.seek_to_text);
-        Button seekToButton = (Button) findViewById(R.id.seek_to_button);
-        seekToButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int skipToSecs = Integer.valueOf(seekToText.getText().toString());
-                player.seekToMillis(skipToSecs * 1000);
-            }
-        });
-     */
     }
+
 
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean wasRestored) {
@@ -312,6 +276,7 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
         if (!wasRestored) {
             player.cueVideo(videoKey); // Plays https://www.youtube.com/watch?v=fhWaJi1Hsfo
         }
+        player.play();
 
     }
 
@@ -363,6 +328,7 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
         public void onSeekTo(int i) {
             // Called when a jump in playback position occurs, either
             // due to user scrubbing or call to seekRelativeMillis() or seekToMillis()
+            Log.v("FUCK",player.getCurrentTimeMillis() + "");
         }
     }
 
@@ -378,6 +344,7 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
         public void onLoaded(String s) {
             // Called when a video is done loading.
             // Playback methods such as play(), pause() or seekToMillis(int) may be called after this callback.
+            showKrSubtitle();
         }
 
         @Override
@@ -393,11 +360,85 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
         @Override
         public void onVideoEnded() {
             // Called when the video reaches its end.
+            if(state == 0){ // 한글 자막 재생 종료
+                showEnSubtitle();
+                state++;
+            } else if (state == 1){ // 영어 자막 재생 종료
+                state++;
+            } else if (state == 2){ // 인터랙팅 종료
+
+            }
         }
 
         @Override
         public void onError(YouTubePlayer.ErrorReason errorReason) {
             // Called when an error occurs.
         }
+    }
+    private void showKrSubtitle(){
+        new NaverTTS("한글 자막과 함께 보여드릴게요.", new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                addChatBubble(true, "한글 자막과 함께 보여드릴게요.");
+                player.play();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int i = 0;
+                        ArrayList flag = new ArrayList();
+                        for(int j = 0;j < subtitles.size();j++){
+                            flag.add(true);
+                        }
+                        nowSubtitleIndex = 0;
+                        while (i < subtitles.size()){
+                            if(player.getCurrentTimeMillis() > subtitles.get(i).getTime() && (boolean)flag.get(i)){
+                                flag.set(i, false);
+                                nowSubtitleIndex = i++;
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        addChatBubble(true,subtitles.get(nowSubtitleIndex).getKorean());
+                                        Log.v("FUCK", nowSubtitleIndex + subtitles.get(nowSubtitleIndex).getKorean());
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }).start();
+            }
+        }).start();
+    }
+    
+    private void showEnSubtitle(){
+        new NaverTTS("영어 자막과 함께 보여드릴게요.", new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                addChatBubble(true,"영어 자막과 함께 보여드릴게요.");
+                player.play();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int i = 0;
+                        ArrayList flag = new ArrayList();
+                        for(int j = 0;j < subtitles.size();j++){
+                            flag.add(true);
+                        }
+                        nowSubtitleIndex = 0;
+                        while (i < subtitles.size()){
+                            if(player.getCurrentTimeMillis() != player.getDurationMillis() && player.getCurrentTimeMillis()> subtitles.get(i).getTime() && (boolean)flag.get(i)){
+                                flag.set(i, false);
+                                nowSubtitleIndex = i++;
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        addChatBubble(true,subtitles.get(nowSubtitleIndex).getEnglish());
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }).start();
+            }
+        }).start();
     }
 }
