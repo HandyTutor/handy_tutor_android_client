@@ -65,8 +65,9 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
     private ArrayList<Subtitle> subtitles;
     private int nowSubtitleIndex = 0;
 
-    // 사용자의 발화 저장
+    // 평가에 필요한 스크립트
     private ArrayList<String> voices;
+    private ArrayList<String> scripts;
 
     // 학습 순서 변수 0 = 한글 자막 재생 중, 1 = 영어 자막 재생 중, 2 = 인터랙팅 중
     private int state = 0;
@@ -117,7 +118,7 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
                 if (writer != null) {
                     writer.close();
                 }
-                startRecognition();
+                voices.add("error");
                 break;
 
             case R.id.clientInactive:
@@ -126,6 +127,7 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
                     writer.close();
                 }
                 voices.add(mResult);
+                player.play();
                 break;
         }
     }
@@ -176,6 +178,7 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
         super.onPause();
         // NOTE : release() must be called on stop time.
         naverRecognizer.getSpeechRecognizer().release();
+        finish();
     }
 
     // Declare handler for handling SpeechRecognizer thread's Messages.
@@ -201,7 +204,8 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         chatRoom = findViewById(R.id.chat_room);
-        videoKey = getIntent().getStringExtra("video_key");
+        //videoKey = getIntent().getStringExtra("video_key");
+        videoKey = "BkmxXpMqfAU";
 
         // 유튜브 플레이어 셋팅
         youTubeView = findViewById(R.id.youtube_view);
@@ -233,6 +237,7 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
                         try {
                             JSONArray jsonArray = new JSONArray(result);
                             subtitles = new ArrayList<Subtitle>();
+                            scripts = new ArrayList<String>();
                             for(int i = 0;i < jsonArray.length();i++){
                                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                                 Subtitle subtitle = new Subtitle();
@@ -241,6 +246,7 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
                                 subtitle.setRole(Integer.parseInt(jsonObject.getString("ROLE")));
                                 subtitle.setTime(Integer.parseInt(jsonObject.getString("TIME")));
                                 subtitles.add(subtitle);
+                                scripts.add(subtitle.getEnglish());
                             }
                         } catch (JSONException e1) {
                             e1.printStackTrace();
@@ -346,8 +352,15 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
                 showEnSubtitle();
                 state++;
             } else if (state == 1){ // 영어 자막 재생 종료
+                startLearning();
                 state++;
             } else if (state == 2){ // 인터랙팅 종료
+
+                Intent intent = new Intent(getApplicationContext() , ScoreActivity.class);
+                intent.putExtra("video_key", videoKey);
+                intent.putStringArrayListExtra("scripts", scripts);
+                intent.putStringArrayListExtra("voices", voices);
+                startActivity(intent);
 
             }
         }
@@ -416,6 +429,37 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
                                         addChatBubble(true,subtitles.get(nowSubtitleIndex).getEnglish());
                                     }
                                 });
+                            }
+                        }
+                    }
+                }).start();
+            }
+        }).start();
+    }
+    private void startLearning(){
+        addChatBubble(true,"영상이 정지되면 적절한 대사를 말해주세요.");
+        new NaverTTS("영상이 정지되면 적절한 대사를 말해주세요.", new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                player.play();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int i = 0;
+                        ArrayList flag = new ArrayList();
+                        for(int j = 0;j < subtitles.size();j++){
+                            flag.add(true);
+                        }
+                        nowSubtitleIndex = 0;
+                        while (i < subtitles.size()){
+                            if(player.getCurrentTimeMillis() != player.getDurationMillis() && player.getCurrentTimeMillis()> subtitles.get(i).getTime() && (boolean)flag.get(i)){
+                                flag.set(i, false);
+                                nowSubtitleIndex = i++;
+                                Log.d("FUCK", "종료종료" + i + subtitles.size());
+                                if(subtitles.get(i - 1).getRole() == 1){
+                                    player.pause();
+                                    startRecognition();
+                                }
                             }
                         }
                     }

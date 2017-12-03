@@ -254,6 +254,7 @@ public class MainActivity extends Activity {
         super.onPause();
         // NOTE : release() must be called on stop time.
         naverRecognizer.getSpeechRecognizer().release();
+        finish();
     }
 
     // Declare handler for handling SpeechRecognizer thread's Messages.
