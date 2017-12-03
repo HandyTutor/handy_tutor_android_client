@@ -58,14 +58,13 @@ public class MainActivity extends Activity {
         switch (msg.what) {
             case R.id.clientReady:
                 // Now an user can speak.
-                Log.d(Config.TAG,"clientReady");
                 writer = new AudioWriterPCM(Environment.getExternalStorageDirectory().getAbsolutePath() + "/NaverSpeechTest");
                 writer.open("Test");
                 break;
 
             case R.id.audioRecording:
                 writer.write((short[]) msg.obj);
-                Log.d(Config.TAG,"recoding");
+                //Log.d(Config.TAG,"recoding");
                 break;
 
             case R.id.partialResult:
@@ -107,7 +106,10 @@ public class MainActivity extends Activity {
                 if (writer != null) {
                     writer.close();
                 }
-                handleFinalResult(mResult);
+                if(!mResult.equals(""))
+                    handleFinalResult(mResult);
+                else
+                    startRecognition();
                 break;
         }
     }
@@ -119,9 +121,8 @@ public class MainActivity extends Activity {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
                     addChatBubble(true, "오늘 학습을 시작할게요.");
-
                     Intent intent = new Intent(getApplicationContext() , StudyActivity.class);
-                    intent.putExtra("video_key", "pAvl9GSWc8Y");
+                    intent.putExtra("video_key", "BkmxXpMqfAU");
                     intent.putExtra("index", 1);
                     startActivity(intent);
                 }

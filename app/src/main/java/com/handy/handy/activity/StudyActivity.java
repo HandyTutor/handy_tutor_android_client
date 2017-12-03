@@ -65,6 +65,9 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
     private ArrayList<Subtitle> subtitles;
     private int nowSubtitleIndex = 0;
 
+    // 사용자의 발화 저장
+    private ArrayList<String> voices;
+
     // 학습 순서 변수 0 = 한글 자막 재생 중, 1 = 영어 자막 재생 중, 2 = 인터랙팅 중
     private int state = 0;
 
@@ -122,29 +125,8 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
                 if (writer != null) {
                     writer.close();
                 }
-                handleFinalResult(mResult);
+                voices.add(mResult);
                 break;
-        }
-    }
-
-    // 음성 인식 최종 결과를 처리
-    private void handleFinalResult(String result){
-        if(result.contains("그만")){
-            new NaverTTS("학습 목록을 다시 보여드릴게요.", new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer) {
-                    addChatBubble(true, "학습 목록을 다시 보여드릴게요.");
-                    finish();
-                }
-            }).start();
-        } else {
-            new NaverTTS("무슨 뜻인지 잘 모르겠어요. 다시 한번 말해주세요.", new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer) {
-                    addChatBubble(true, "무슨 뜻인지 잘 모르겠어요. 다시 한번 말해주세요.");
-                    startRecognition();
-                }
-            }).start();
         }
     }
 
@@ -219,8 +201,7 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         chatRoom = findViewById(R.id.chat_room);
-        //videoKey = getIntent().getStringExtra("video_key");
-        videoKey = "pAvl9GSWc8Y";
+        videoKey = getIntent().getStringExtra("video_key");
 
         // 유튜브 플레이어 셋팅
         youTubeView = findViewById(R.id.youtube_view);
@@ -237,6 +218,9 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
         chatRoom.setAdapter(chatRoomAdapter);
         chatRoom.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         chatRoom.setItemAnimator(new DefaultItemAnimator());
+
+        // 사용자의 발화 어레이리스트 초기화
+        voices = new ArrayList<String>();
 
         // 서버에서 자막리스트를 받아옴
         Ion.with(getApplicationContext())
@@ -258,7 +242,6 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
                                 subtitle.setTime(Integer.parseInt(jsonObject.getString("TIME")));
                                 subtitles.add(subtitle);
                             }
-                            Log.v("FUCK", subtitles.size() + result);
                         } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
@@ -328,7 +311,6 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
         public void onSeekTo(int i) {
             // Called when a jump in playback position occurs, either
             // due to user scrubbing or call to seekRelativeMillis() or seekToMillis()
-            Log.v("FUCK",player.getCurrentTimeMillis() + "");
         }
     }
 
@@ -376,10 +358,10 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
         }
     }
     private void showKrSubtitle(){
+        addChatBubble(true, "한글 자막과 함께 보여드릴게요.");
         new NaverTTS("한글 자막과 함께 보여드릴게요.", new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
-                addChatBubble(true, "한글 자막과 함께 보여드릴게요.");
                 player.play();
                 new Thread(new Runnable() {
                     @Override
@@ -408,12 +390,12 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
             }
         }).start();
     }
-    
+
     private void showEnSubtitle(){
+        addChatBubble(true,"영어 자막과 함께 보여드릴게요.");
         new NaverTTS("영어 자막과 함께 보여드릴게요.", new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
-                addChatBubble(true,"영어 자막과 함께 보여드릴게요.");
                 player.play();
                 new Thread(new Runnable() {
                     @Override
