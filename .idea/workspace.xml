@@ -10,31 +10,7 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="No Filters" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0c2e188f-4bda-426e-b0ff-d3eed2389f6f" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/raw/complete_score.mp3" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/raw/dont_know.mp3" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/raw/hi_show_list.mp3" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/raw/show_list.mp3" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/raw/start_study.mp3" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/raw/tell_me.mp3" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/raw/with_en.mp3" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/raw/with_kr.mp3" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/res/raw/effect_sound.wav" afterPath="$PROJECT_DIR$/app/src/main/res/raw/sound.wav" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/4.1/fileHashes/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/4.1/fileHashes/fileHashes.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/4.1/fileHashes/fileHashes.lock" afterPath="$PROJECT_DIR$/.gradle/4.1/fileHashes/fileHashes.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/4.1/javaCompile/classAnalysis.bin" afterPath="$PROJECT_DIR$/.gradle/4.1/javaCompile/classAnalysis.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/4.1/javaCompile/javaCompile.lock" afterPath="$PROJECT_DIR$/.gradle/4.1/javaCompile/javaCompile.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/4.1/javaCompile/taskHistory.bin" afterPath="$PROJECT_DIR$/.gradle/4.1/javaCompile/taskHistory.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/4.1/taskHistory/fileSnapshots.bin" afterPath="$PROJECT_DIR$/.gradle/4.1/taskHistory/fileSnapshots.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/4.1/taskHistory/taskHistory.bin" afterPath="$PROJECT_DIR$/.gradle/4.1/taskHistory/taskHistory.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/4.1/taskHistory/taskHistory.lock" afterPath="$PROJECT_DIR$/.gradle/4.1/taskHistory/taskHistory.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/handy/handy/Config.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/handy/handy/Config.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/handy/handy/activity/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/handy/handy/activity/MainActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/handy/handy/activity/ScoreActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/handy/handy/activity/ScoreActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/handy/handy/activity/StudyActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/handy/handy/activity/StudyActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_score.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_score.xml" />
-    </list>
+    <list default="true" id="0c2e188f-4bda-426e-b0ff-d3eed2389f6f" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -76,8 +52,8 @@
       <file leaf-file-name="StudyActivity.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/handy/handy/activity/StudyActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="7011">
-              <caret line="458" column="50" lean-forward="false" selection-start-line="458" selection-start-column="50" selection-end-line="458" selection-end-column="50" />
+            <state relative-caret-position="391">
+              <caret line="462" column="64" lean-forward="true" selection-start-line="462" selection-start-column="64" selection-end-line="462" selection-end-column="64" />
               <folding>
                 <element signature="e#5208#5276#0" expanded="false" />
                 <element signature="method#onStart#0;class#StudyActivity#0" expanded="false" />
@@ -93,11 +69,25 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="NaverTTS.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="SoundManager.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/handy/handy/utils/SoundManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="399">
+              <caret line="25" column="0" lean-forward="true" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#549#779#0" expanded="true" />
+                <element signature="e#778#779#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="NaverTTS.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/handy/handy/utils/NaverTTS.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="532">
-              <caret line="54" column="34" lean-forward="true" selection-start-line="54" selection-start-column="34" selection-end-line="54" selection-end-column="103" />
+            <state relative-caret-position="147">
+              <caret line="64" column="16" lean-forward="true" selection-start-line="64" selection-start-column="16" selection-end-line="69" selection-end-column="34" />
               <folding />
             </state>
           </provider>
@@ -1984,12 +1974,12 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/handy/handy/activity/StudyActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/handy/handy/utils/NaverTTS.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/handy/handy/activity/MainActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/handy/handy/utils/SoundManager.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="923" />
-    <option name="y" value="30" />
+    <option name="x" value="953" />
     <option name="width" value="974" />
     <option name="height" value="1047" />
   </component>
@@ -2828,7 +2818,7 @@
       <option name="ACTIVITY_CLASS" value="" />
       <method>
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1512381624160" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1512382781491" />
       </method>
     </configuration>
     <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Instrumented Tests">
@@ -2876,7 +2866,7 @@
       </Profilers>
       <method>
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1512381624160" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1512382781491" />
       </method>
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -3059,7 +3049,7 @@
       <option name="ACTIVITY_CLASS" value="" />
       <method>
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1512381624161" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1512382781492" />
       </method>
     </configuration>
     <list size="1">
@@ -3110,7 +3100,8 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="923" y="30" width="974" height="1047" extended-state="0" />
+    <frame x="953" y="0" width="974" height="1047" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32919955" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32919955" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -3129,7 +3120,7 @@
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27621195" sideWeight="0.50269854" order="13" side_tool="true" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28993437" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28993437" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -3159,13 +3150,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/appcompat-v7-26.1.0.aar/fc1c79054a8381bfd174c0afdf71a809/res/values/values.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="386" column="4" lean-forward="false" selection-start-line="386" selection-start-column="4" selection-end-line="386" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/handy/handy/adapter/VideoListAdapter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="77">
@@ -3478,8 +3462,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/handy/handy/activity/StudyActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7011">
-          <caret line="458" column="50" lean-forward="false" selection-start-line="458" selection-start-column="50" selection-end-line="458" selection-end-column="50" />
+        <state relative-caret-position="391">
+          <caret line="462" column="64" lean-forward="true" selection-start-line="462" selection-start-column="64" selection-end-line="462" selection-end-column="64" />
           <folding>
             <element signature="e#5208#5276#0" expanded="false" />
             <element signature="method#onStart#0;class#StudyActivity#0" expanded="false" />
@@ -3496,9 +3480,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/handy/handy/utils/NaverTTS.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="532">
-          <caret line="54" column="34" lean-forward="true" selection-start-line="54" selection-start-column="34" selection-end-line="54" selection-end-column="103" />
+        <state relative-caret-position="147">
+          <caret line="64" column="16" lean-forward="true" selection-start-line="64" selection-start-column="16" selection-end-line="69" selection-end-column="34" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/handy/handy/utils/SoundManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="399">
+          <caret line="25" column="0" lean-forward="true" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#549#779#0" expanded="true" />
+            <element signature="e#778#779#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
