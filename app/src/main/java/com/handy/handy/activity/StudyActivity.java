@@ -144,7 +144,7 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
             // Start button is pushed when SpeechRecognizer's state is inactive.
             // Run SpeechRecongizer by calling recognize().
             mResult = "";
-            naverRecognizer.recognize(SpeechConfig.LanguageType.KOREAN);
+            naverRecognizer.recognize(SpeechConfig.LanguageType.ENGLISH);
         } else {
             Log.d(Config.TAG, "stop and wait Final Result");
 
@@ -254,7 +254,6 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
                     }
                 });
     }
-
 
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean wasRestored) {
