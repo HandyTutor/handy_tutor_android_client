@@ -225,7 +225,7 @@ public class MainActivity extends Activity {
             greeting = "학습 목록을 보여드릴게요.";
             chatRoomAdapter = new ChatRoomAdapter(R.layout.chat_bubble,getApplicationContext());
         }
-        new NaverTTS(greeting, new MediaPlayer.OnCompletionListener() {
+        new NaverTTS(greeting,new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 addChatBubble(true, greeting);

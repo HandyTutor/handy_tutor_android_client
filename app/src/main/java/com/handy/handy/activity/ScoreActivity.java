@@ -1,7 +1,9 @@
 package com.handy.handy.activity;
 
 import android.content.Intent;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -9,7 +11,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 
 import com.handy.handy.Config;
 import com.handy.handy.Item.ChatBubbleItem;
@@ -160,6 +164,23 @@ public class ScoreActivity extends AppCompatActivity {
         voices = getIntent().getStringArrayListExtra("voices");
         videoKey = getIntent().getStringExtra("video_key");
 
+        Button button = findViewById(R.id.sound_btn);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SoundPool soundPool = new SoundPool(1, AudioManager.STREAM_NOTIFICATION,0);
+                final int r = soundPool.load(getApplicationContext(), R.raw.sound, 2);
+
+                soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+                    @Override
+                    public void onLoadComplete(SoundPool soundPool, int sampleId,
+                                               int status) {
+                        soundPool.play(r, 20, 20, 1, 0, 1f);
+                    }
+                });
+
+            }
+        });
     }
 
     @Override

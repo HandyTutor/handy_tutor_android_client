@@ -1,7 +1,9 @@
 package com.handy.handy.activity;
 
 import android.content.Intent;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -65,9 +67,10 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
     private ArrayList<Subtitle> subtitles;
     private int nowSubtitleIndex = 0;
 
-    // 평가에 필요한 스크립트
+    // 평가에 필요한 스크립트 변수
     private ArrayList<String> voices;
     private ArrayList<String> scripts;
+    private int voiceIndex = 0;
 
     // 학습 순서 변수 0 = 한글 자막 재생 중, 1 = 영어 자막 재생 중, 2 = 인터랙팅 중
     private int state = 0;
@@ -78,8 +81,8 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
             case R.id.clientReady:
                 // Now an user can speak.
                 Log.d(Config.TAG,"clientReady");
-                writer = new AudioWriterPCM(Environment.getExternalStorageDirectory().getAbsolutePath() + "/NaverSpeechTest");
-                writer.open("Test");
+                writer = new AudioWriterPCM(Environment.getExternalStorageDirectory().getAbsolutePath() + "/NaverSpeech");
+                writer.open(videoKey + voices.size());
                 break;
 
             case R.id.audioRecording:
@@ -205,7 +208,7 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
 
         chatRoom = findViewById(R.id.chat_room);
         //videoKey = getIntent().getStringExtra("video_key");
-        videoKey = "BkmxXpMqfAU";
+        videoKey = "QmJZqzzNCfU";
 
         // 유튜브 플레이어 셋팅
         youTubeView = findViewById(R.id.youtube_view);
@@ -331,7 +334,8 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
         public void onLoaded(String s) {
             // Called when a video is done loading.
             // Playback methods such as play(), pause() or seekToMillis(int) may be called after this callback.
-            showKrSubtitle();
+            //showKrSubtitle();
+            startLearning();
         }
 
         @Override
@@ -347,20 +351,19 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
         @Override
         public void onVideoEnded() {
             // Called when the video reaches its end.
+
             if(state == 0){ // 한글 자막 재생 종료
                 showEnSubtitle();
                 state++;
-            } else if (state == 1){ // 영어 자막 재생 종료
+            } else if (state == 10){ // 영어 자막 재생 종료
                 startLearning();
                 state++;
-            } else if (state == 2){ // 인터랙팅 종료
-
+            } else if (state == 20){ // 인터랙팅 종료
                 Intent intent = new Intent(getApplicationContext() , ScoreActivity.class);
                 intent.putExtra("video_key", videoKey);
                 intent.putStringArrayListExtra("scripts", scripts);
                 intent.putStringArrayListExtra("voices", voices);
                 startActivity(intent);
-
             }
         }
 
@@ -457,7 +460,17 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
                                 Log.d("FUCK", "종료종료" + i + subtitles.size());
                                 if(subtitles.get(i - 1).getRole() == 1){
                                     player.pause();
-                                    startRecognition();
+                                    SoundPool soundPool = new SoundPool(1, AudioManager.STREAM_NOTIFICATION,0);
+                                    final int r = soundPool.load(getApplicationContext(), R.raw.sound, 2);
+
+                                    soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+                                        @Override
+                                        public void onLoadComplete(SoundPool soundPool, int sampleId,
+                                                                   int status) {
+                                            soundPool.play(r, 20, 20, 1, 0, 1f);
+                                            startRecognition();
+                                        }
+                                    });
                                 }
                             }
                         }

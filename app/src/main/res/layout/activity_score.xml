@@ -5,5 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.handy.handy.activity.ScoreActivity">
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/sound_btn"/>
 
 </android.support.constraint.ConstraintLayout>
