@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.handy.handy.Config;
 import com.handy.handy.Item.ChatBubbleItem;
@@ -21,6 +22,7 @@ import com.handy.handy.R;
 import com.handy.handy.adapter.ChatRoomAdapter;
 import com.handy.handy.utils.AudioWriterPCM;
 import com.handy.handy.utils.NaverTTS;
+import com.handy.handy.utils.SoundManager;
 import com.naver.speech.clientapi.SpeechConfig;
 import com.naver.speech.clientapi.SpeechRecognitionResult;
 
@@ -164,23 +166,8 @@ public class ScoreActivity extends AppCompatActivity {
         voices = getIntent().getStringArrayListExtra("voices");
         videoKey = getIntent().getStringExtra("video_key");
 
-        Button button = findViewById(R.id.sound_btn);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SoundPool soundPool = new SoundPool(1, AudioManager.STREAM_NOTIFICATION,0);
-                final int r = soundPool.load(getApplicationContext(), R.raw.sound, 2);
+        // 테스팅 코드
 
-                soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
-                    @Override
-                    public void onLoadComplete(SoundPool soundPool, int sampleId,
-                                               int status) {
-                        soundPool.play(r, 20, 20, 1, 0, 1f);
-                    }
-                });
-
-            }
-        });
     }
 
     @Override

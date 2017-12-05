@@ -70,7 +70,6 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
     // 평가에 필요한 스크립트 변수
     private ArrayList<String> voices;
     private ArrayList<String> scripts;
-    private int voiceIndex = 0;
 
     // 학습 순서 변수 0 = 한글 자막 재생 중, 1 = 영어 자막 재생 중, 2 = 인터랙팅 중
     private int state = 0;
@@ -208,7 +207,7 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
 
         chatRoom = findViewById(R.id.chat_room);
         //videoKey = getIntent().getStringExtra("video_key");
-        videoKey = "QmJZqzzNCfU";
+        videoKey = "BkmxXpMqfAU";
 
         // 유튜브 플레이어 셋팅
         youTubeView = findViewById(R.id.youtube_view);
@@ -249,7 +248,8 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
                                 subtitle.setRole(Integer.parseInt(jsonObject.getString("ROLE")));
                                 subtitle.setTime(Integer.parseInt(jsonObject.getString("TIME")));
                                 subtitles.add(subtitle);
-                                scripts.add(subtitle.getEnglish());
+                                if(subtitle.getRole() == 1)
+                                    scripts.add(subtitle.getEnglish());
                             }
                         } catch (JSONException e1) {
                             e1.printStackTrace();
@@ -355,10 +355,10 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
             if(state == 0){ // 한글 자막 재생 종료
                 showEnSubtitle();
                 state++;
-            } else if (state == 10){ // 영어 자막 재생 종료
+            } else if (state == 1){ // 영어 자막 재생 종료
                 startLearning();
                 state++;
-            } else if (state == 20){ // 인터랙팅 종료
+            } else if (state == 2){ // 인터랙팅 종료
                 Intent intent = new Intent(getApplicationContext() , ScoreActivity.class);
                 intent.putExtra("video_key", videoKey);
                 intent.putStringArrayListExtra("scripts", scripts);
@@ -457,20 +457,20 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
                             if(player.getCurrentTimeMillis() != player.getDurationMillis() && player.getCurrentTimeMillis()> subtitles.get(i).getTime() && (boolean)flag.get(i)){
                                 flag.set(i, false);
                                 nowSubtitleIndex = i++;
-                                Log.d("FUCK", "종료종료" + i + subtitles.size());
                                 if(subtitles.get(i - 1).getRole() == 1){
                                     player.pause();
-                                    SoundPool soundPool = new SoundPool(1, AudioManager.STREAM_NOTIFICATION,0);
-                                    final int r = soundPool.load(getApplicationContext(), R.raw.sound, 2);
+                                    SoundPool soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC,0);
+                                    final int resource = soundPool.load(getApplicationContext(), R.raw.sound, 2);
 
                                     soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
                                         @Override
                                         public void onLoadComplete(SoundPool soundPool, int sampleId,
                                                                    int status) {
-                                            soundPool.play(r, 20, 20, 1, 0, 1f);
+                                            soundPool.play(resource, 5, 5, 1, 0, 1f);
                                             startRecognition();
                                         }
                                     });
+
                                 }
                             }
                         }

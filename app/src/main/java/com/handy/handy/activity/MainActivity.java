@@ -13,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.handy.handy.Config;
 import com.handy.handy.Item.ChatBubbleItem;
@@ -22,6 +23,7 @@ import com.handy.handy.utils.NaverTTS;
 import com.handy.handy.R;
 import com.handy.handy.adapter.VideoListAdapter;
 import com.handy.handy.utils.AudioWriterPCM;
+import com.handy.handy.utils.SoundManager;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.naver.speech.clientapi.SpeechConfig;
@@ -40,8 +42,6 @@ public class MainActivity extends Activity {
     private NaverRecognizer naverRecognizer;
     private java.lang.String mResult;
     private AudioWriterPCM writer;
-    private boolean restartFlag = false;
-    private String greeting = "학습 목록을 보여 드릴게요.";
 
     // ChatRoomo, VideoList 리사이클러 뷰에 필요한 변수
     private RecyclerView videoList;
@@ -120,6 +120,7 @@ public class MainActivity extends Activity {
             new NaverTTS("오늘 학습을 시작할게요.", new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
+                    mediaPlayer.release();
                     addChatBubble(true, "오늘 학습을 시작할게요.");
                     Intent intent = new Intent(getApplicationContext() , StudyActivity.class);
                     intent.putExtra("video_key", "BkmxXpMqfAU");
@@ -131,6 +132,7 @@ public class MainActivity extends Activity {
             new NaverTTS("무슨 뜻인지 잘 모르겠어요. 다시 한번 말해주세요.", new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
+                    mediaPlayer.release();
                     addChatBubble(true, "무슨 뜻인지 잘 모르겠어요. 다시 한번 말해주세요.");
                     startRecognition();
                 }
@@ -173,6 +175,8 @@ public class MainActivity extends Activity {
         chatRoom.setItemAnimator(new DefaultItemAnimator());
 
         // 서버에서 비디오 목록을 받아옴
+
+
         Ion.with(getApplicationContext())
                 .load(Config.SERVER_ADRESS + "video_list")
                 .asString()
@@ -192,11 +196,23 @@ public class MainActivity extends Activity {
                                 videoRecyclerItem.setVideoKey((String)video.get("VIDEO_KEY"));
                                 videoListAdapter.addItem(videoRecyclerItem);
                             }
+
                         } catch (JSONException e1) {
                             e1.printStackTrace();
                         }
                     }
                 });
+
+        new NaverTTS("안녕하세요. 학습 목록을 보여드릴게요.", new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                mediaPlayer.release();
+                addChatBubble(true, "안녕하세요. 학습 목록을 보여드릴게요.");
+                naverRecognizer.getSpeechRecognizer().initialize();
+                startRecognition();
+            }
+        }).start();
+
     }
 
     // 음성 인식을 시작
@@ -218,21 +234,8 @@ public class MainActivity extends Activity {
         super.onStart();
         // NOTE : initialize() must be called on start time.
 
-        if(!restartFlag){
-            greeting = "안녕하세요." + greeting;
-            restartFlag = true;
-        } else {
-            greeting = "학습 목록을 보여드릴게요.";
-            chatRoomAdapter = new ChatRoomAdapter(R.layout.chat_bubble,getApplicationContext());
-        }
-        new NaverTTS(greeting,new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                addChatBubble(true, greeting);
-                naverRecognizer.getSpeechRecognizer().initialize();
-                startRecognition();
-            }
-        }).start();
+
+
     }
 
     @Override
