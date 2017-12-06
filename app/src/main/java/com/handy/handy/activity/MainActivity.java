@@ -13,7 +13,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.handy.handy.Config;
 import com.handy.handy.Item.ChatBubbleItem;
@@ -23,7 +22,6 @@ import com.handy.handy.utils.NaverTTS;
 import com.handy.handy.R;
 import com.handy.handy.adapter.VideoListAdapter;
 import com.handy.handy.utils.AudioWriterPCM;
-import com.handy.handy.utils.SoundManager;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.naver.speech.clientapi.SpeechConfig;
@@ -37,6 +35,7 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class MainActivity extends Activity {
+
     // Naver Recognition에 필요한 변수
     private RecognitionHandler handler;
     private NaverRecognizer naverRecognizer;
@@ -146,6 +145,67 @@ public class MainActivity extends Activity {
         chatRoom.scrollToPosition(chatRoomAdapter.getItemCount() - 1);
     }
 
+
+
+    // 음성 인식을 시작
+    private void startRecognition(){
+        if(!naverRecognizer.getSpeechRecognizer().isRunning()) {
+            // Start button is pushed when SpeechRecognizer's state is inactive.
+            // Run SpeechRecongizer by calling recognize().
+            mResult = "";
+            naverRecognizer.recognize(SpeechConfig.LanguageType.KOREAN);
+        } else {
+            Log.d(Config.TAG, "stop and wait Final Result");
+
+            naverRecognizer.getSpeechRecognizer().stop();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // NOTE : initialize() must be called on start time.
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mResult = "";
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // NOTE : release() must be called on stop time.
+        naverRecognizer.getSpeechRecognizer().release();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // NOTE : release() must be called on stop time.
+        naverRecognizer.getSpeechRecognizer().release();
+        finish();
+    }
+
+    // Declare handler for handling SpeechRecognizer thread's Messages.
+    static class RecognitionHandler extends Handler {
+        private final WeakReference<MainActivity> mActivity;
+
+        RecognitionHandler(MainActivity activity) {
+            mActivity = new WeakReference<MainActivity>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            MainActivity activity = mActivity.get();
+            if (activity != null) {
+                activity.handleMessage(msg);
+            }
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -213,67 +273,5 @@ public class MainActivity extends Activity {
             }
         }).start();
 
-    }
-
-    // 음성 인식을 시작
-    private void startRecognition(){
-        if(!naverRecognizer.getSpeechRecognizer().isRunning()) {
-            // Start button is pushed when SpeechRecognizer's state is inactive.
-            // Run SpeechRecongizer by calling recognize().
-            mResult = "";
-            naverRecognizer.recognize(SpeechConfig.LanguageType.KOREAN);
-        } else {
-            Log.d(Config.TAG, "stop and wait Final Result");
-
-            naverRecognizer.getSpeechRecognizer().stop();
-        }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // NOTE : initialize() must be called on start time.
-
-
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        mResult = "";
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        // NOTE : release() must be called on stop time.
-        naverRecognizer.getSpeechRecognizer().release();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // NOTE : release() must be called on stop time.
-        naverRecognizer.getSpeechRecognizer().release();
-        finish();
-    }
-
-    // Declare handler for handling SpeechRecognizer thread's Messages.
-    static class RecognitionHandler extends Handler {
-        private final WeakReference<MainActivity> mActivity;
-
-        RecognitionHandler(MainActivity activity) {
-            mActivity = new WeakReference<MainActivity>(activity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            MainActivity activity = mActivity.get();
-            if (activity != null) {
-                activity.handleMessage(msg);
-            }
-        }
     }
 }

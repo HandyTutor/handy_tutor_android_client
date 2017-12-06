@@ -1,20 +1,16 @@
 package com.handy.handy.activity;
 
 import android.content.Intent;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.SoundPool;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.Toast;
 
 import com.handy.handy.Config;
 import com.handy.handy.Item.ChatBubbleItem;
@@ -22,26 +18,31 @@ import com.handy.handy.R;
 import com.handy.handy.adapter.ChatRoomAdapter;
 import com.handy.handy.utils.AudioWriterPCM;
 import com.handy.handy.utils.NaverTTS;
-import com.handy.handy.utils.SoundManager;
 import com.naver.speech.clientapi.SpeechConfig;
 import com.naver.speech.clientapi.SpeechRecognitionResult;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ScoreActivity extends AppCompatActivity {
+
     // Naver Recognition에 필요한 변수
-    private MainActivity.RecognitionHandler handler;
+    private RecognitionHandler handler;
     private NaverRecognizer naverRecognizer;
     private java.lang.String mResult;
     private AudioWriterPCM writer;
 
+    // ChatRoomo 리사이클러 뷰에 필요한 변수
+    private RecyclerView chatRoom;
+    private ChatRoomAdapter chatRoomAdapter;
+
     // 말풍선 생성에 필요한 변수
     private boolean chatBubbleFlag = false;
     private ChatBubbleItem chatBubbleItem;
-    private RecyclerView chatRoom;
-    private ChatRoomAdapter chatRoomAdapter;
 
     // 발음 평가를 위한 스크립트
     private ArrayList<String> scripts;
@@ -115,6 +116,7 @@ public class ScoreActivity extends AppCompatActivity {
             new NaverTTS("오늘 학습을 시작할게요.", new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
+                    mediaPlayer.release();
                     addChatBubble(true, "오늘 학습을 시작할게요.");
                     Intent intent = new Intent(getApplicationContext() , StudyActivity.class);
                     intent.putExtra("video_key", "BkmxXpMqfAU");
@@ -126,11 +128,18 @@ public class ScoreActivity extends AppCompatActivity {
             new NaverTTS("무슨 뜻인지 잘 모르겠어요. 다시 한번 말해주세요.", new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
+                    mediaPlayer.release();
                     addChatBubble(true, "무슨 뜻인지 잘 모르겠어요. 다시 한번 말해주세요.");
                     startRecognition();
                 }
             }).start();
         }
+    }
+
+    private void addChatBubble(boolean isLeft, String content){
+        ChatBubbleItem chatBubbleItem = new ChatBubbleItem(isLeft, content);
+        chatRoomAdapter.addItem(chatBubbleItem);
+        chatRoom.scrollToPosition(chatRoomAdapter.getItemCount() - 1);
     }
 
     // 음성 인식을 시작
@@ -141,33 +150,8 @@ public class ScoreActivity extends AppCompatActivity {
             mResult = "";
             naverRecognizer.recognize(SpeechConfig.LanguageType.KOREAN);
         } else {
-            Log.d(Config.TAG, "stop and wait Final Result");
-
             naverRecognizer.getSpeechRecognizer().stop();
         }
-    }
-
-    private void addChatBubble(boolean isLeft, String content){
-        ChatBubbleItem chatBubbleItem = new ChatBubbleItem(isLeft, content);
-        chatRoomAdapter.addItem(chatBubbleItem);
-        chatRoom.scrollToPosition(chatRoomAdapter.getItemCount() - 1);
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_score);
-
-        // 화면 꺼지지 않음
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        // 발음 평가를 위한 스크립트 로드
-        scripts = getIntent().getStringArrayListExtra("scripts");
-        voices = getIntent().getStringArrayListExtra("voices");
-        videoKey = getIntent().getStringExtra("video_key");
-
-        // 테스팅 코드
-
     }
 
     @Override
@@ -175,15 +159,6 @@ public class ScoreActivity extends AppCompatActivity {
         super.onStart();
         // NOTE : initialize() must be called on start time.
 
-
-        new NaverTTS("", new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                addChatBubble(true, "");
-                naverRecognizer.getSpeechRecognizer().initialize();
-                startRecognition();
-            }
-        }).start();
     }
 
     @Override
@@ -205,6 +180,7 @@ public class ScoreActivity extends AppCompatActivity {
         super.onPause();
         // NOTE : release() must be called on stop time.
         naverRecognizer.getSpeechRecognizer().release();
+        finish();
     }
 
     // Declare handler for handling SpeechRecognizer thread's Messages.
@@ -222,5 +198,58 @@ public class ScoreActivity extends AppCompatActivity {
                 activity.handleMessage(msg);
             }
         }
+    }
+
+    private byte[] readBytesFromFile(String filePath) {
+        FileInputStream fileInputStream = null;
+        byte[] bytesArray = null;
+
+        try {
+            File file = new File(filePath);
+            bytesArray = new byte[(int) file.length()];
+            //read file into bytes[]
+            fileInputStream = new FileInputStream(file);
+            fileInputStream.read(bytesArray);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fileInputStream != null) {
+                try {
+                    fileInputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return bytesArray;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_score);
+
+        // 화면 꺼지지 않음
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        // 발음 평가를 위한 스크립트 로드
+        scripts = getIntent().getStringArrayListExtra("scripts");
+        voices = getIntent().getStringArrayListExtra("voices");
+        videoKey = getIntent().getStringExtra("video_key");
+
+        // 뷰를 할당
+        chatRoom = findViewById(R.id.chat_room);
+
+        // Naver STT 셋팅
+        handler = new ScoreActivity.RecognitionHandler(this);
+        naverRecognizer = new NaverRecognizer(this, handler, Config.NAVER_CLIENT_ID);
+
+        // 채팅 리스트 리사이클러 뷰 셋팅
+        chatRoomAdapter = new ChatRoomAdapter(R.layout.chat_bubble,getApplicationContext());
+        chatRoom.setAdapter(chatRoomAdapter);
+        chatRoom.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        chatRoom.setItemAnimator(new DefaultItemAnimator());
+
+
     }
 }

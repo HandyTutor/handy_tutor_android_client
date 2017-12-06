@@ -146,6 +146,7 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
             // Start button is pushed when SpeechRecognizer's state is inactive.
             // Run SpeechRecongizer by calling recognize().
             mResult = "";
+            naverRecognizer.getSpeechRecognizer().initialize();
             naverRecognizer.recognize(SpeechConfig.LanguageType.ENGLISH);
         } else {
             Log.d(Config.TAG, "stop and wait Final Result");
@@ -199,68 +200,11 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
             }
         }
     }
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_study);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        chatRoom = findViewById(R.id.chat_room);
-        //videoKey = getIntent().getStringExtra("video_key");
-        videoKey = "BkmxXpMqfAU";
-
-        // 유튜브 플레이어 셋팅
-        youTubeView = findViewById(R.id.youtube_view);
-        youTubeView.initialize(Config.YOUTUBE_API_KEY, this);
-        playerStateChangeListener = new MyPlayerStateChangeListener();
-        playbackEventListener = new MyPlaybackEventListener();
-
-        // Naver STT 셋팅
-        handler = new StudyActivity.RecognitionHandler(this);
-        naverRecognizer = new NaverRecognizer(this, handler, Config.NAVER_CLIENT_ID);
-
-        // 채팅 리스트 리사이클러 뷰 셋팅
-        chatRoomAdapter = new ChatRoomAdapter(R.layout.chat_bubble,getApplicationContext());
-        chatRoom.setAdapter(chatRoomAdapter);
-        chatRoom.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        chatRoom.setItemAnimator(new DefaultItemAnimator());
-
-        // 사용자의 발화 어레이리스트 초기화
-        voices = new ArrayList<String>();
-
-        // 서버에서 자막리스트를 받아옴
-        Ion.with(getApplicationContext())
-                .load(Config.SERVER_ADRESS + "video")
-                .setBodyParameter("video_key",videoKey)
-                .asString()
-                .setCallback(new FutureCallback<String>() {
-                    @Override
-                    public void onCompleted(Exception e, String result) {
-                        try {
-                            JSONArray jsonArray = new JSONArray(result);
-                            subtitles = new ArrayList<Subtitle>();
-                            scripts = new ArrayList<String>();
-                            for(int i = 0;i < jsonArray.length();i++){
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                Subtitle subtitle = new Subtitle();
-                                subtitle.setEnglish(jsonObject.getString("ENGLISH"));
-                                subtitle.setKorean(jsonObject.getString("KOREAN"));
-                                subtitle.setRole(Integer.parseInt(jsonObject.getString("ROLE")));
-                                subtitle.setTime(Integer.parseInt(jsonObject.getString("TIME")));
-                                subtitles.add(subtitle);
-                                if(subtitle.getRole() == 1)
-                                    scripts.add(subtitle.getEnglish());
-                            }
-                        } catch (JSONException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                });
-    }
 
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean wasRestored) {
         this.player = player;
+        player.setPlayerStyle(YouTubePlayer.PlayerStyle.MINIMAL);
         player.setPlayerStateChangeListener(playerStateChangeListener);
         player.setPlaybackEventListener(playbackEventListener);
 
@@ -334,8 +278,11 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
         public void onLoaded(String s) {
             // Called when a video is done loading.
             // Playback methods such as play(), pause() or seekToMillis(int) may be called after this callback.
-            //showKrSubtitle();
-            startLearning();
+            if(state == 0){
+                //showKrSubtitle();
+                startLearning();
+                state++;
+            }
         }
 
         @Override
@@ -352,13 +299,13 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
         public void onVideoEnded() {
             // Called when the video reaches its end.
 
-            if(state == 0){ // 한글 자막 재생 종료
+            if(state == 1){ // 한글 자막 재생 종료
                 showEnSubtitle();
                 state++;
-            } else if (state == 1){ // 영어 자막 재생 종료
+            } else if (state == 2){ // 영어 자막 재생 종료
                 startLearning();
                 state++;
-            } else if (state == 2){ // 인터랙팅 종료
+            } else if (state == 3){ // 인터랙팅 종료
                 Intent intent = new Intent(getApplicationContext() , ScoreActivity.class);
                 intent.putExtra("video_key", videoKey);
                 intent.putStringArrayListExtra("scripts", scripts);
@@ -470,7 +417,6 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
                                             startRecognition();
                                         }
                                     });
-
                                 }
                             }
                         }
@@ -478,5 +424,64 @@ public class StudyActivity extends YouTubeBaseActivity implements YouTubePlayer.
                 }).start();
             }
         }).start();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_study);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        chatRoom = findViewById(R.id.chat_room);
+        //videoKey = getIntent().getStringExtra("video_key");
+        videoKey = "QmJZqzzNCfU";
+
+        // 유튜브 플레이어 셋팅
+        youTubeView = findViewById(R.id.youtube_view);
+        youTubeView.initialize(Config.YOUTUBE_API_KEY, this);
+        playerStateChangeListener = new MyPlayerStateChangeListener();
+        playbackEventListener = new MyPlaybackEventListener();
+
+        // Naver STT 셋팅
+        handler = new StudyActivity.RecognitionHandler(this);
+        naverRecognizer = new NaverRecognizer(this, handler, Config.NAVER_CLIENT_ID);
+
+        // 채팅 리스트 리사이클러 뷰 셋팅
+        chatRoomAdapter = new ChatRoomAdapter(R.layout.chat_bubble,getApplicationContext());
+        chatRoom.setAdapter(chatRoomAdapter);
+        chatRoom.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        chatRoom.setItemAnimator(new DefaultItemAnimator());
+
+        // 사용자의 발화 어레이리스트 초기화
+        voices = new ArrayList<String>();
+
+        // 서버에서 자막리스트를 받아옴
+        Ion.with(getApplicationContext())
+                .load(Config.SERVER_ADRESS + "video")
+                .setBodyParameter("video_key",videoKey)
+                .asString()
+                .setCallback(new FutureCallback<String>() {
+                    @Override
+                    public void onCompleted(Exception e, String result) {
+                        try {
+                            JSONArray jsonArray = new JSONArray(result);
+                            subtitles = new ArrayList<Subtitle>();
+                            scripts = new ArrayList<String>();
+                            for(int i = 0;i < jsonArray.length();i++){
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                Subtitle subtitle = new Subtitle();
+                                subtitle.setEnglish(jsonObject.getString("ENGLISH"));
+                                subtitle.setKorean(jsonObject.getString("KOREAN"));
+                                subtitle.setRole(Integer.parseInt(jsonObject.getString("ROLE")));
+                                subtitle.setTime(Integer.parseInt(jsonObject.getString("TIME")));
+                                subtitles.add(subtitle);
+                                if(subtitle.getRole() == 1)
+                                    scripts.add(subtitle.getEnglish());
+                            }
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                });
     }
 }
