@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.handy.handy.Item.ScoreListItem;
 import com.handy.handy.R;
+import com.handy.handy.utils.PronunciationManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +23,13 @@ public class ScoreListAdapter extends RecyclerView.Adapter<ScoreListAdapter.View
     private List<ScoreListItem> list;
     private int itemLayout;
     private Context context;
+    private String videoKey;
 
-    public ScoreListAdapter(int itemLayout, Context context){
+    public ScoreListAdapter(int itemLayout, Context context, String videoKey){
         this.context = context;
-        this.list = new ArrayList<ScoreListItem>();
+        this.videoKey = videoKey;
         this.itemLayout = itemLayout;
+        this.list = new ArrayList<ScoreListItem>();
     }
     public void addItem(ScoreListItem scoreListItem){
         list.add(scoreListItem);
@@ -44,6 +47,7 @@ public class ScoreListAdapter extends RecyclerView.Adapter<ScoreListAdapter.View
         ScoreListItem item = list.get(position);
         viewHolder.script.setText(item.getScript());
         viewHolder.voice.setText(item.getVoice());
+        new PronunciationManager(context, viewHolder.pronunciation, item.getScript(), videoKey + position).start();
 
         viewHolder.itemView.setTag(item);
     }
