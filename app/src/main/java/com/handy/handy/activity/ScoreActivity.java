@@ -14,8 +14,10 @@ import android.view.WindowManager;
 
 import com.handy.handy.Config;
 import com.handy.handy.Item.ChatBubbleItem;
+import com.handy.handy.Item.ScoreListItem;
 import com.handy.handy.R;
 import com.handy.handy.adapter.ChatRoomAdapter;
+import com.handy.handy.adapter.ScoreListAdapter;
 import com.handy.handy.utils.AudioWriterPCM;
 import com.handy.handy.utils.NaverTTS;
 import com.naver.speech.clientapi.SpeechConfig;
@@ -48,6 +50,10 @@ public class ScoreActivity extends AppCompatActivity {
     private ArrayList<String> scripts;
     private ArrayList<String> voices;
     private String videoKey;
+
+    // 스코어 리사이클러 뷰에 필요한 변수
+    private RecyclerView scoreList;
+    private ScoreListAdapter scoreListAdapter;
 
     // Handle speech recognition Messages.
     private void handleMessage(Message msg) {
@@ -112,15 +118,13 @@ public class ScoreActivity extends AppCompatActivity {
 
     // 음성 인식 최종 결과를 처리
     private void handleFinalResult(String result){
-        if(result.contains("시작")){
-            new NaverTTS("오늘 학습을 시작할게요.", new MediaPlayer.OnCompletionListener() {
+        if(result.contains("그만")){
+            new NaverTTS("오늘의 학습을 종료할게요.", new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
                     mediaPlayer.release();
-                    addChatBubble(true, "오늘 학습을 시작할게요.");
-                    Intent intent = new Intent(getApplicationContext() , StudyActivity.class);
-                    intent.putExtra("video_key", "BkmxXpMqfAU");
-                    intent.putExtra("index", 1);
+                    addChatBubble(true, "오늘의 학습을 종료할게요.");
+                    Intent intent = new Intent(getApplicationContext() , BlackActivity.class);
                     startActivity(intent);
                 }
             }).start();
@@ -148,6 +152,8 @@ public class ScoreActivity extends AppCompatActivity {
             // Start button is pushed when SpeechRecognizer's state is inactive.
             // Run SpeechRecongizer by calling recognize().
             mResult = "";
+
+            naverRecognizer.getSpeechRecognizer().initialize();
             naverRecognizer.recognize(SpeechConfig.LanguageType.KOREAN);
         } else {
             naverRecognizer.getSpeechRecognizer().stop();
@@ -250,6 +256,64 @@ public class ScoreActivity extends AppCompatActivity {
         chatRoom.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         chatRoom.setItemAnimator(new DefaultItemAnimator());
 
+        // 테스트 셋팅
+        scripts = new ArrayList<String>();
+        voices = new ArrayList<String>();
+
+        scripts.add("This guy sayas \"hello\" I wanna kill my self");
+        scripts.add("I'll be fine. I hope she will be very happy.");
+        scripts.add("Why does everyone keep fixating on that");
+
+        voices.add("This guy sayas \"hello\" I wanna kill my self");
+        voices.add("I'm okay. I wish she will be very happy.");
+        voices.add("I don't know");
+
+        videoKey = "BkmxXpMqfAU";
+
+        // 리스트뷰 예시 셋팅
+        scoreList = findViewById(R.id.score_view);
+        ArrayList<ScoreListItem> scoreListItems= new ArrayList<ScoreListItem>();
+
+        ScoreListItem scoreListItem = new ScoreListItem();
+        scoreListItem.setScript(scripts.get(0));
+        scoreListItem.setVoice(voices.get(0));
+        scoreListItem.setFileName(videoKey + 0);
+        scoreListItem.setPronunciation("BEST");
+        scoreListItem.setSimilarity("O");
+        scoreListItems.add(scoreListItem);
+
+        scoreListItem = new ScoreListItem();
+        scoreListItem.setScript(scripts.get(1));
+        scoreListItem.setVoice(voices.get(1));
+        scoreListItem.setFileName(videoKey + 1);
+        scoreListItem.setPronunciation("BEST");
+        scoreListItem.setSimilarity("O");
+        scoreListItems.add(scoreListItem);
+
+        scoreListItem = new ScoreListItem();
+        scoreListItem.setScript(scripts.get(2));
+        scoreListItem.setVoice(voices.get(2));
+        scoreListItem.setFileName(videoKey + 2);
+        scoreListItem.setPronunciation("BAD");
+        scoreListItem.setSimilarity("X");
+        scoreListItems.add(scoreListItem);
+
+        // 리사이클러 뷰 셋팅
+        scoreListAdapter = new ScoreListAdapter(R.layout.score_list_item,getApplicationContext(),scoreListItems);
+        scoreList.setAdapter(scoreListAdapter);
+        scoreList.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        scoreList.setItemAnimator(new DefaultItemAnimator());
+
+
+        new NaverTTS("체쩜 결과를 보여드릴게요.", new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                mediaPlayer.release();
+                addChatBubble(true, "체점 결과를 보여드릴게요.");
+                naverRecognizer.getSpeechRecognizer().initialize();
+                startRecognition();
+            }
+        }).start();
 
     }
 }

@@ -4,34 +4,45 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:gravity="center_vertical">
+    android:gravity="center_vertical"
+    android:id="@+id/linear_layout"
+    android:padding="6dp">
     <LinearLayout
         android:layout_width="0dp"
         android:layout_weight="6"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:textColor="@color/black"
             android:text="aaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            android:gravity="center"
             android:id="@+id/script_text"/>
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:textColor="@color/black"
             android:text="aaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            android:gravity="center"
             android:id="@+id/voice_text"/>
     </LinearLayout>
     <TextView
         android:layout_weight="1"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="적합"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="체점중"
+        android:textColor="@color/black"
         android:id="@+id/pronunciation_text"/>
     <TextView
         android:layout_weight="1"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="좋음"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:text="체점중"
         android:id="@+id/similarity_text"/>
 
 </LinearLayout>

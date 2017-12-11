@@ -48,6 +48,8 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
         VideoListItem item = list.get(position);
         viewHolder.textTitle.setText(item.getTitle());
         viewHolder.textCheck.setText(item.getCheck());
+        if(!item.getCheck().equals("미완료"))
+            viewHolder.textCheck.setTextColor(context.getResources().getColor(R.color.blue));
         //viewHolder.img.setBackgroundResource(item.getImage());
         Glide.with(context).
                 load("https://img.youtube.com/vi/" + item.getVideoKey() + "/0.jpg").

@@ -5,11 +5,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.handy.handy.Item.ScoreListItem;
 import com.handy.handy.R;
 import com.handy.handy.utils.PronunciationManager;
+import com.handy.handy.utils.SimilarityManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,17 +25,11 @@ public class ScoreListAdapter extends RecyclerView.Adapter<ScoreListAdapter.View
     private List<ScoreListItem> list;
     private int itemLayout;
     private Context context;
-    private String videoKey;
 
-    public ScoreListAdapter(int itemLayout, Context context, String videoKey){
+    public ScoreListAdapter(int itemLayout, Context context, ArrayList<ScoreListItem> list){
         this.context = context;
-        this.videoKey = videoKey;
         this.itemLayout = itemLayout;
-        this.list = new ArrayList<ScoreListItem>();
-    }
-    public void addItem(ScoreListItem scoreListItem){
-        list.add(scoreListItem);
-        this.notifyItemInserted(list.size() - 1);
+        this.list = list;
     }
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
@@ -47,7 +43,13 @@ public class ScoreListAdapter extends RecyclerView.Adapter<ScoreListAdapter.View
         ScoreListItem item = list.get(position);
         viewHolder.script.setText(item.getScript());
         viewHolder.voice.setText(item.getVoice());
-        new PronunciationManager(context, viewHolder.pronunciation, item.getScript(), videoKey + position).start();
+        viewHolder.similarity.setText(item.getSimilarity());
+        viewHolder.pronunciation.setText(item.getPronunciation());
+        if(position % 2 == 0){
+            viewHolder.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.light_blue));
+        }
+        //new PronunciationManager(context, viewHolder.pronunciation, item.getScript(), item.getFileName()).start();
+        //new SimilarityManager(context,viewHolder.similarity, item.getScript(),item.getVoice()).start();
 
         viewHolder.itemView.setTag(item);
     }
@@ -63,10 +65,12 @@ public class ScoreListAdapter extends RecyclerView.Adapter<ScoreListAdapter.View
         public TextView voice;
         public TextView pronunciation;
         public TextView similarity;
+        public LinearLayout linearLayout;
 
 
         public ViewHolder(View itemView){
             super(itemView);
+            linearLayout = itemView.findViewById(R.id.linear_layout);
             script = itemView.findViewById(R.id.script_text);
             voice = itemView.findViewById(R.id.voice_text);
             pronunciation = itemView.findViewById(R.id.pronunciation_text);

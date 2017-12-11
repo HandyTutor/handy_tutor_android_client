@@ -7,9 +7,26 @@ package com.handy.handy.Item;
 public class ScoreListItem {
     private String script;
     private String voice;
-    private String pronunciation;
-    private String similarity;
     private String fileName;
+    private String similarity;
+    private String pronunciation;
+
+    public String getSimilarity() {
+        return similarity;
+    }
+
+    public void setSimilarity(String similarity) {
+        this.similarity = similarity;
+    }
+
+    public String getPronunciation() {
+        return pronunciation;
+    }
+
+    public void setPronunciation(String pronunciation) {
+        this.pronunciation = pronunciation;
+    }
+
 
     public String getScript() {
         return script;
@@ -25,22 +42,6 @@ public class ScoreListItem {
 
     public void setVoice(String voice) {
         this.voice = voice;
-    }
-
-    public String getPronunciation() {
-        return pronunciation;
-    }
-
-    public void setPronunciation(String pronunciation) {
-        this.pronunciation = pronunciation;
-    }
-
-    public String getSimilarity() {
-        return similarity;
-    }
-
-    public void setSimilarity(String similarity) {
-        this.similarity = similarity;
     }
 
     public String getFileName() {

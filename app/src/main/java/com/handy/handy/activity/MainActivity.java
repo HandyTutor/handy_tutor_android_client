@@ -63,7 +63,7 @@ public class MainActivity extends Activity {
 
             case R.id.audioRecording:
                 writer.write((short[]) msg.obj);
-                //Log.d(Config.TAG,"recoding");
+                Log.d(Config.TAG,"recoding");
                 break;
 
             case R.id.partialResult:
@@ -153,6 +153,7 @@ public class MainActivity extends Activity {
             // Start button is pushed when SpeechRecognizer's state is inactive.
             // Run SpeechRecongizer by calling recognize().
             mResult = "";
+            naverRecognizer.getSpeechRecognizer().initialize();
             naverRecognizer.recognize(SpeechConfig.LanguageType.KOREAN);
         } else {
             Log.d(Config.TAG, "stop and wait Final Result");
@@ -234,9 +235,61 @@ public class MainActivity extends Activity {
         chatRoom.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         chatRoom.setItemAnimator(new DefaultItemAnimator());
 
+
+        // 예시 비디오 아이템
+        /*
+        VideoListItem videoListItem;
+
+        videoListItem = new VideoListItem();
+        videoListItem.setCheck("완료");
+        videoListItem.setTitle("심슨 Scene1");
+        videoListItem.setVideoKey("oBQRJf67cAk");
+        videoListAdapter.addItem(videoListItem);
+
+        videoListItem = new VideoListItem();
+        videoListItem.setCheck("완료");
+        videoListItem.setTitle("심슨 Scene2");
+        videoListItem.setVideoKey("S65_th5s8hQ");
+        videoListAdapter.addItem(videoListItem);
+
+        videoListItem = new VideoListItem();
+        videoListItem.setCheck("완료");
+        videoListItem.setTitle("위베어스베어 Scene1");
+        videoListItem.setVideoKey("TpHDteUxR4c");
+        videoListAdapter.addItem(videoListItem);
+
+        videoListItem = new VideoListItem();
+        videoListItem.setCheck("미완료");
+        videoListItem.setTitle("프렌즈 Scene1");
+        videoListItem.setVideoKey("QmJZqzzNCfU");
+        videoListAdapter.addItem(videoListItem);
+
+        videoListItem = new VideoListItem();
+        videoListItem.setCheck("미완료");
+        videoListItem.setTitle("사우스파크 Scene1");
+        videoListItem.setVideoKey("hLUr3AHZihU");
+        videoListAdapter.addItem(videoListItem);
+
+        videoListItem = new VideoListItem();
+        videoListItem.setCheck("미완료");
+        videoListItem.setTitle("사우스파크 Scene2");
+        videoListItem.setVideoKey("ZrU_tt4R3xY");
+        videoListAdapter.addItem(videoListItem);
+
+        videoListItem = new VideoListItem();
+        videoListItem.setCheck("미완료");
+        videoListItem.setTitle("위베어스베어 Scene2");
+        videoListItem.setVideoKey("yk6ORj9QVOk");
+        videoListAdapter.addItem(videoListItem);
+
+        videoListItem = new VideoListItem();
+        videoListItem.setCheck("미완료");
+        videoListItem.setTitle("프렌즈 Scene2");
+        videoListItem.setVideoKey("gWSI3hMhxO4");
+        videoListAdapter.addItem(videoListItem);
+        */
+
         // 서버에서 비디오 목록을 받아옴
-
-
         Ion.with(getApplicationContext())
                 .load(Config.SERVER_ADRESS + "video_list")
                 .asString()
@@ -262,6 +315,7 @@ public class MainActivity extends Activity {
                         }
                     }
                 });
+
 
         new NaverTTS("안녕하세요. 학습 목록을 보여드릴게요.", new MediaPlayer.OnCompletionListener() {
             @Override

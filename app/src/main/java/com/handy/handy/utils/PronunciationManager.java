@@ -3,6 +3,7 @@ package com.handy.handy.utils;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Base64;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -38,6 +39,7 @@ public class PronunciationManager extends Thread{
         this.textView = textView;
         this.script = script;
         this.audioFilePath += fileName;
+        this.audioFilePath += ".pcm";
     }
 
     public void run(){
@@ -63,6 +65,7 @@ public class PronunciationManager extends Thread{
                     .setCallback(new FutureCallback<String>() {
                         @Override
                         public void onCompleted(Exception e, String result) {
+                            Log.v("FUCK",result);
                             try{
                                 JSONObject jsonObject = new JSONObject(result);
                                 jsonObject = new JSONObject(jsonObject.getString("return_object"));

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="95dp"
     android:orientation="horizontal"
     android:layout_margin="3dp"
     android:elevation="1dp"
@@ -24,7 +24,7 @@
                 android:id="@+id/txt_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
+                android:textColor="@color/black"
                 android:layout_weight="1"
                 android:textSize="16dp"
                 android:gravity="center"/>
@@ -33,9 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:textColor="@color/green"
-                android:layout_height="wrap_content"
-                android:textStyle="bold" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </LinearLayout>
 

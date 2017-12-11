@@ -58,16 +58,12 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
             viewHolder.linearLayout.removeAllViews();
             viewHolder.linearLayout.addView(viewHolder.arrow);
             viewHolder.linearLayout.addView(viewHolder.content);
-            viewHolder.content.setBackgroundColor(context.getResources().getColor(R.color.gray));
-            viewHolder.content.setTextColor(context.getResources().getColor(R.color.black));
         } else {
             viewHolder.arrow.setImageResource(R.drawable.speech_bubble_right);
             viewHolder.linearLayout.setGravity(Gravity.RIGHT);
             viewHolder.linearLayout.removeAllViews();
             viewHolder.linearLayout.addView(viewHolder.content);
             viewHolder.linearLayout.addView(viewHolder.arrow);
-            viewHolder.content.setBackgroundColor(context.getResources().getColor(R.color.blue));
-            viewHolder.content.setTextColor(context.getResources().getColor(R.color.white));
         }
         viewHolder.itemView.setTag(item);
     }

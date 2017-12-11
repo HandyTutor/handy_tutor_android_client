@@ -1,6 +1,7 @@
 package com.handy.handy.utils;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.handy.handy.Config;
@@ -25,7 +26,7 @@ public class SimilarityManager extends Thread {
     }
     public void run(){
         Ion.with(context)
-                .load(Config.SERVER_ADRESS)
+                .load(Config.SERVER_ADRESS + "phrase_similarity")
                 .setBodyParameter("input1",input1)
                 .setBodyParameter("input2",input2)
                 .asString()
