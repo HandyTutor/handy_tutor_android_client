@@ -8,6 +8,8 @@ Handy Tutor is an English conversation learning application using English video 
 <img style="margin-left:10px;" src="screenshot3.png" width="65%" >
 <img style="margin-left:10px;" src="screenshot4.png" width="65%" >
 
+# Handy Tutor Client
+
 ## API used
 
 YouTube Android Player API
